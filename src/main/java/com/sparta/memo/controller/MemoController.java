@@ -19,7 +19,7 @@ public class MemoController {
     // ID의 Value , 객체이름
 
     @PostMapping("/memos")
-    public MemoResponseDto createMemo(@RequestBody MemoRequestDto requestDto){
+    public MemoResponseDto createMemo(@RequestBody MemoRequestDto requestDto) {
         // RequestDto -> Entity
         Memo memo = new Memo(requestDto);
 
@@ -28,20 +28,47 @@ public class MemoController {
         memo.setId(maxId);
 
         // DB 저장
-         memoList.put(memo.getId(), memo);
+        memoList.put(memo.getId(), memo);
 
-         // Entity -> ResponseDto
+        // Entity -> ResponseDto
         MemoResponseDto memoResponseDto = new MemoResponseDto(memo);
 
         return memoResponseDto;
     }
 
     @GetMapping("/memos")
-    public List<MemoResponseDto> getMemos(){
+    public List<MemoResponseDto> getMemos() {
         // Map To List
         List<MemoResponseDto> responseList = memoList.values().stream()
                 .map(MemoResponseDto::new).toList(); // .stream()은 반복해준다는 뜻
 
         return responseList;
+    }
+
+    @PutMapping("/memos/{id}")
+    public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if(memoList.containsKey(id)) {
+            // 해당 메모 가져오기
+            Memo memo = memoList.get(id);
+
+            // memo 수정
+            memo.update(requestDto);
+            return id;
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
+        }
+    }
+
+    @DeleteMapping("/memos/{id}")
+    public Long deleteMemo(@PathVariable Long id) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if (memoList.containsKey(id)) {
+            // 해당 메모를 삭제
+            memoList.remove(id);
+            return id;
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
+        }
     }
 }
