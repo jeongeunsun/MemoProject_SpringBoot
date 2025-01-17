@@ -39,6 +39,14 @@ public class MemoService {
 
     }
 
+    public List<MemoResponseDto> getMemosByKeyword(String keyword) {
+        return memoRepository
+                .findAllByContentsContainsOrderByModifiedAtDesc(keyword)
+                .stream()
+                .map(MemoResponseDto::new)
+                .toList();
+    }
+
     @Transactional // 영속성 컨테스트의 변경 감지 적용을 위해 꼭 써줘야한다!
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
