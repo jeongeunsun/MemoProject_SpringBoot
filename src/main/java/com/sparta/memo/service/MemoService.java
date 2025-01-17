@@ -34,7 +34,7 @@ public class MemoService {
     }
 
     public List<MemoResponseDto> getMemos() {
-        return memoRepository.findAll().stream().map(MemoResponseDto::new).toList();
+        return memoRepository.findAllByOrderByModifiedAtDesc().stream().map(MemoResponseDto::new).toList();
 
 
     }
